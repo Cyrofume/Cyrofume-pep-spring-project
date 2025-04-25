@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,10 +11,12 @@ import com.example.SocialMediaApp;
 import com.example.entity.*;
 //we also need to query all account objects and more perhaps
 import com.example.repository.AccountRepository;
+import com.example.repository.MessageRepository;
 import com.example.service.AccountService;
+import com.example.service.MessageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+// import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -37,6 +40,8 @@ public class SocialMediaController {
     //we want to inject dependency here
     @Autowired
     AccountService accountServ;
+    @Autowired //I didn't think I would need to autowired for each declaration...
+    MessageService messageServ;
 
     /**
      * The registration will be successful if and only if the 
@@ -54,19 +59,22 @@ public class SocialMediaController {
      * @return 400 if not sucessful for any other reason
      */
     @PostMapping("/register") 
-    public @ResponseBody ResponseEntity<Account> registerAccount(@RequestBody Account noIdAcount) {
+    public @ResponseBody ResponseEntity<Account> registerAccount(@RequestBody Account noIdAccount) {
         //in our class if no id is presented our entites account class will auto ID it
         // accountServ.userNameExists(noIdAcount.getUsername());
         System.out.println("Hey register an account");
         System.out.println("What is the db size? " + accountServ.getDBSize());
-        if (accountServ.userNameExists(noIdAcount.getUsername())) {
-                return ResponseEntity.status(409).body(noIdAcount);
+        if (accountServ.userNameExists(noIdAccount.getUsername())) {
+                return ResponseEntity.status(409).body(noIdAccount);
                 // return null;
                 // System.out.println("Hey this requestbody's username exists in db!");
         } else {
             ///
-            accountServ.addAccount(noIdAcount);
-            return ResponseEntity.status(HttpStatus.OK).body(noIdAcount);
+            //we need to make a new account that will generate its own id
+            //thiss needs more testing to verify id is consistent[!]
+            Account newAccount = new Account(noIdAccount.getUsername(), noIdAccount.getPassword());
+            accountServ.addAccount(newAccount);
+            return ResponseEntity.status(HttpStatus.OK).body(newAccount);
 
         }
         //now we need to make sure the account is added!
@@ -80,4 +88,62 @@ public class SocialMediaController {
         // AccountRepository petRepository = 
         // List<Account> allUsers = AccountRepository
     }
+
+    @PostMapping("/login")
+    public @ResponseBody ResponseEntity<Account> verifyAccount(@RequestBody Account account) {
+
+        System.out.println("does account have an id? " + account.getAccountId());
+
+        Account tempAccount = accountServ.verifyAccount(account);
+
+        if (tempAccount != null) {
+            System.out.println("does account have an id? " +tempAccount.getAccountId());
+            return ResponseEntity.status(HttpStatus.OK).body(tempAccount);
+        }
+        System.out.println("does account have an id? " + account.getAccountId());
+        return ResponseEntity.status(401).body(account);
+    }
+
+    /**
+     * Here below we deal with message restful api's
+     */
+
+    @PostMapping("/messages") 
+    public @ResponseBody ResponseEntity<Message> createMessage(@RequestBody Message message) {
+        //in our class if no id is presented our entites account class will auto ID it
+        // accountServ.userNameExists(noIdAcount.getUsername());
+        System.out.println("Hey register an message");
+        System.out.println("What is the db size? " + accountServ.getDBSize());
+        if (accountServ.idExists(message.getPostedBy()) != null && message.getMessageText().length() > 0 && message.getMessageText().length() < 255) {
+                
+
+                Message newMessage = new Message(message.getPostedBy(), message.getMessageText(), message.getTimePostedEpoch());
+                messageServ.addMessage(newMessage); //we can now add it in peice
+                // messageServ.addMessage(newMessage)
+                // return ResponseEntity.status(HttpStatus.OK).body(message);
+                return ResponseEntity.status(HttpStatus.OK).body(newMessage);
+                // return null;
+                // System.out.println("Hey this requestbody's username exists in db!");
+        } else {
+            ///
+            //we need to make a new account that will generate its own id
+            //thiss needs more testing to verify id is consistent[!]
+            // Account newAccount = new Account(noIdAccount.getUsername(), noIdAccount.getPassword());
+            // accountServ.addAccount(newAccount);
+            // return ResponseEntity.status(HttpStatus.OK).body(message);
+            return ResponseEntity.status(400).body(message);
+
+        }
+        //now we need to make sure the account is added!
+        // return noIdAcount; //does this work if null or not? lets see
+        //but there are cases we need to follow as well.
+
+        //what if the account cannot be created
+        //check if the username exists, return 409
+        //else return 400;
+        // AccountRepository accountQ = new AccountRepository();
+        // AccountRepository petRepository = 
+        // List<Account> allUsers = AccountRepository
+    }
+
 }

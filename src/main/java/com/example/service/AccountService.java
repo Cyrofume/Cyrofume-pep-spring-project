@@ -41,6 +41,30 @@ public class AccountService {
         }
         return false;
     }
+
+    /**
+     * Another finder for id
+     */
+    public Account idExists(int id) {
+
+        List<Account> everyAccount = accountRepos.findAll();
+        for (Account currAccount : everyAccount) {
+            if (currAccount.getAccountId() == id) {
+                return currAccount;
+            }
+
+        }
+        return null;
+
+        // Optional<Account> optionalAcc = accountRepos.findById(id);
+
+        // return optionalAcc.orElse(null);
+        // if (accountRepos.findById(id) == null) {
+        //     return false;
+        // }
+        // return true;
+        // return accountRepos.findById(id);
+    }
     public int getDBSize() {
         // return accountRepos.find;
         List<Account> everyAccount = accountRepos.findAll();
@@ -56,7 +80,14 @@ public class AccountService {
     public Account addAccount(Account account) {
         return accountRepos.save(account);
     }
-    
 
-
+    public Account verifyAccount(Account account) {
+        List<Account> everyAccount = accountRepos.findAll();
+        for (Account currAccount : everyAccount) {
+            if (currAccount.getUsername().equals(account.getUsername()) && currAccount.getPassword().equals(account.getPassword())) {
+                return currAccount;
+            }
+        }
+        return null; //nothing found
+    }
 }
