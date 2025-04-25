@@ -156,12 +156,13 @@ public class SocialMediaController {
         //empty or not return it
         return ResponseEntity.status(HttpStatus.OK).body(listOfMessages);
     }   
-    @GetMapping("/messages/{message_id}")
-    public ResponseEntity<Message> getMessageByID(@PathVariable int id) {
-        System.out.println(id  + " what is the id for this item?");
+    @GetMapping("/messages/{messageId}")
+    public @ResponseBody ResponseEntity<Message> getMessageByID(@PathVariable("messageId") long messageId) {
+        System.out.println(messageId  + " what is the id for this item?");
         // List<Message> listOfMessages = messageServ.getAllMessages();
-        Message aMessage = messageServ.getMessageByID(id);
+        Message aMessage = messageServ.getMessageByID(messageId);
         //empty or not return it
+        // return ResponseEntity.status(HttpStatus.OK).body("none");
         return ResponseEntity.status(HttpStatus.OK).body(aMessage);
     }  
 }

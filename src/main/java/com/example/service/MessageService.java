@@ -51,18 +51,28 @@ public class MessageService {
      * Get a message by its message id
      */
     public Message getMessageByID(long id) {
-        Message testMessage = null;
-        // return (Message) messageRepos.getById((long) id);
-        Optional<Message> notTest = messageRepos.findById(id);
-        if (notTest.isPresent()) {
-            // return testMessage.get();
-            testMessage = notTest.get();
+        List<Message> allMessages = messageRepos.findAll();
+        //Come back for the FindAllID
+        for (Message currMessage : allMessages) {
+            if (currMessage.getMessageId() == id) {
+                return currMessage;
+            }
         }
-        // // return testMessage.isPresent();
-        // // messageRepos.get
-        // // return messageRepos.getById((long)id);
-        // return null;
-        // return messageRepos.findById(id).get();
-        return testMessage;
+        return null;
+        // Message testMessage = null;
+        // // return (Message) messageRepos.getById((long) id);
+        // System.out.println(id + " inside message service get ID");
+        // Optional<Message> notTest = messageRepos.findById(id);
+        // if (notTest.isPresent()) {
+        //     // return testMessage.get();
+        //     System.out.println("This message exisits in db");
+        //     testMessage = notTest.get();
+        // }
+        // // // return testMessage.isPresent();
+        // // // messageRepos.get
+        // // // return messageRepos.getById((long)id);
+        // // return null;
+        // // return messageRepos.findById(id).get();
+        // return testMessage;
     }
 }
