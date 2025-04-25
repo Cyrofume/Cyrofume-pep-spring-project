@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+//
+import java.util.*;
 
+import javax.websocket.server.PathParam;
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
  * found in readme.md as well as the test cases. You be required to use the @GET/POST/PUT/DELETE/etc Mapping annotations
@@ -145,5 +149,21 @@ public class SocialMediaController {
         // AccountRepository petRepository = 
         // List<Account> allUsers = AccountRepository
     }
+    @GetMapping("/messages")
+    public @ResponseBody ResponseEntity<List<Message>> getAllMessages() {
 
+        List<Message> listOfMessages = messageServ.getAllMessages();
+        //empty or not return it
+        return ResponseEntity.status(HttpStatus.OK).body(listOfMessages);
+    }   
+    @GetMapping("/messages/{message_id}")
+    public ResponseEntity<Message> getMessageByID(@PathVariable int id) {
+        System.out.println(id  + " what is the id for this item?");
+        // List<Message> listOfMessages = messageServ.getAllMessages();
+        Message aMessage = messageServ.getMessageByID(id);
+        //empty or not return it
+        return ResponseEntity.status(HttpStatus.OK).body(aMessage);
+    }  
 }
+
+

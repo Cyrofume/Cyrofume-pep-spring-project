@@ -18,6 +18,7 @@ import com.example.entity.Message;
 public class MessageService {
 
     //we need to wire the message service with its messge repos
+    @Autowired
     MessageRepository messageRepos;
 
      /**
@@ -39,5 +40,29 @@ public class MessageService {
         return messageRepos.save(message);
     }
 
+    /** 
+     * Gaather all messages from the message db
+     */
+    public List<Message> getAllMessages() {
+        return messageRepos.findAll();
+    }
 
+    /**
+     * Get a message by its message id
+     */
+    public Message getMessageByID(long id) {
+        Message testMessage = null;
+        // return (Message) messageRepos.getById((long) id);
+        Optional<Message> notTest = messageRepos.findById(id);
+        if (notTest.isPresent()) {
+            // return testMessage.get();
+            testMessage = notTest.get();
+        }
+        // // return testMessage.isPresent();
+        // // messageRepos.get
+        // // return messageRepos.getById((long)id);
+        // return null;
+        // return messageRepos.findById(id).get();
+        return testMessage;
+    }
 }
