@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -157,7 +158,7 @@ public class SocialMediaController {
         return ResponseEntity.status(HttpStatus.OK).body(listOfMessages);
     }   
     @GetMapping("/messages/{messageId}")
-    public @ResponseBody ResponseEntity<Message> getMessageByID(@PathVariable("messageId") long messageId) {
+    public @ResponseBody ResponseEntity<Message> getMessageByID(@PathVariable("messageId") Integer messageId) {
         System.out.println(messageId  + " what is the id for this item?");
         // List<Message> listOfMessages = messageServ.getAllMessages();
         Message aMessage = messageServ.getMessageByID(messageId);
@@ -165,6 +166,18 @@ public class SocialMediaController {
         // return ResponseEntity.status(HttpStatus.OK).body("none");
         return ResponseEntity.status(HttpStatus.OK).body(aMessage);
     }  
+    @DeleteMapping("/messages/{messageId}")
+    public @ResponseBody ResponseEntity<Integer> deleteMessageByID(@PathVariable("messageId") Integer messageId) {
+        Message deletedMessage = messageServ.getMessageByID(messageId);
+        int rowsUpdated = 0;
+        if (deletedMessage != null) {
+            rowsUpdated++;
+            return ResponseEntity.status(HttpStatus.OK).body(rowsUpdated);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+        // return ResponseEntity.status(HttpStatus.OK).body(rowsUpdated);
+    }
 }
 
 

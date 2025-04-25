@@ -52,13 +52,14 @@ public class MessageService {
      */
     public Message getMessageByID(long id) {
         List<Message> allMessages = messageRepos.findAll();
-        //Come back for the FindAllID
+        // //Come back for the FindAllID
         for (Message currMessage : allMessages) {
             if (currMessage.getMessageId() == id) {
                 return currMessage;
             }
         }
         return null;
+
         // Message testMessage = null;
         // // return (Message) messageRepos.getById((long) id);
         // System.out.println(id + " inside message service get ID");
@@ -74,5 +75,24 @@ public class MessageService {
         // // return null;
         // // return messageRepos.findById(id).get();
         // return testMessage;
+        // return messageRepos.findById(id).orElse(null);
+    }
+
+    /**
+     * Delete/remove the message
+     */
+    public Message removeMessageID(long id) {
+        List<Message> allMessages = messageRepos.findAll();
+        // //Come back for the FindAllID
+        Message answer = null;
+        for (Message currMessage : allMessages) {
+            if (currMessage.getMessageId() == id) {
+                // return currMessage;
+                answer = currMessage;
+                messageRepos.delete(currMessage); //here is the delete method
+                return answer;
+            }
+        }
+        return null;
     }
 }
