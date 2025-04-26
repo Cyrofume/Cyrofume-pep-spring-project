@@ -197,6 +197,15 @@ public class SocialMediaController {
 
         
     }
+
+    @GetMapping("accounts/{accountId}/messages")
+    public @ResponseBody ResponseEntity<List<Message>> getMessagesPostedBy(@PathVariable("accountId") Integer userID) {
+
+        List<Message> results = messageServ.getMessagesPostedBy(userID);
+        return ResponseEntity.status(200).body(results);
+        // return messageServ.getMessagesPostedBy(userID);
+    }
+    
 }
 
 

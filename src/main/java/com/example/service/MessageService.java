@@ -107,4 +107,18 @@ public class MessageService {
         return oldMessage;
         // return new Message(id, newMessage.getPostedBy(), newMessage.getMessageText(), newMessage.getTimePostedEpoch());
     }
+
+    public List<Message> getMessagesPostedBy(long id) {
+
+        List<Message> listOfMessages = messageRepos.findAll();
+
+        List<Message> results = new ArrayList<>();
+
+        for (Message currMessage : listOfMessages) {
+            if (currMessage.getPostedBy() == id) {
+                results.add(currMessage);
+            }
+        }
+        return results;
+    }
 }
