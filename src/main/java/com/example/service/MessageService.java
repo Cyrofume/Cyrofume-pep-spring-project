@@ -2,6 +2,8 @@ package com.example.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.http.HttpStatus;
+// import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 // import com.example.repository.AccountRepository;
@@ -14,6 +16,10 @@ import com.example.entity.Message;
 
 
 //every component needs an annotation or else it won't work!
+/**
+ * I will need to store a repository to call for business and logic
+ * Ensure all information is tested for Message objects here
+ */
 @Service
 public class MessageService {
 
@@ -23,8 +29,8 @@ public class MessageService {
 
      /**
      * 
-     * this is key into our repoistory -> soccialmedia controller
-     * 
+     * this is key into our repoistory -> socialmediacontroller
+     * where the service tests and ensures logic is correct
      */
 
     @Autowired
@@ -36,8 +42,31 @@ public class MessageService {
      * Include all functions and helpers to be used in the social media controller
      */
 
-     public Message addMessage(Message message) {
-        return messageRepos.save(message);
+    /**
+     * Given a user determine they exist, if so add message into the DB
+     * 
+     * 
+     * The creation of the message will be successful if and only 
+     * Condition:
+     * if the message_text is not blank, \
+     * is under 255 characters, \
+     * and posted_by refers to a real, existing user.\
+     * 
+     * @param user - Account object can be null or not, used for testing
+     * @param message - Message object to be used for testing and saved if all conditions met
+     * @return
+     */
+    public Message addMessage(Account user, Message message) {
+
+        // System.out.println("Hey register an message");
+        // System.out.println("What is the db size? " + accountServ.getDBSize());
+
+        if (user != null && message.getMessageText().length() > 0 && message.getMessageText().length() < 255) {
+                return messageRepos.save(message);
+        } else {
+            return null;
+
+        }
     }
 
     /** 
@@ -49,6 +78,9 @@ public class MessageService {
 
     /**
      * Get a message by its message id
+     * 
+     * @param id - our key to finding a message object in the db
+     * @return a message object or null indicating does not exist
      */
     public Message getMessageByID(long id) {
         List<Message> allMessages = messageRepos.findAll();
@@ -59,29 +91,15 @@ public class MessageService {
             }
         }
         return null;
-
-        // Message testMessage = null;
-        // // return (Message) messageRepos.getById((long) id);
-        // System.out.println(id + " inside message service get ID");
-        // Optional<Message> notTest = messageRepos.findById(id);
-        // if (notTest.isPresent()) {
-        //     // return testMessage.get();
-        //     System.out.println("This message exisits in db");
-        //     testMessage = notTest.get();
-        // }
-        // // // return testMessage.isPresent();
-        // // // messageRepos.get
-        // // // return messageRepos.getById((long)id);
-        // // return null;
-        // // return messageRepos.findById(id).get();
-        // return testMessage;
-        // return messageRepos.findById(id).orElse(null);
     }
 
     /**
+     * Remove message given an message id, if successful return old, removed message 
+     * else fail and return null
      * 
      * @param id - leads to a message to be deleted
-     * @return 
+     * @return oldMessage - deleted object from DB but passed for testing
+     * @return null - deletion not possible since id not in DB
      */
     public Message removeMessageID(long id) {
         List<Message> allMessages = messageRepos.findAll();
@@ -100,6 +118,11 @@ public class MessageService {
 
     /**
      * Passed down the old and new messages
+     * 
+     * The update of a message should be successful if and only 
+     * Condition: 
+     * if the message id already exists and \
+     * the new message_text is not blank and is not over 255 characters.\
      * 
      * @param id - the current message object we want to find and change its text
      * @param newMessage - the new message contains a new blog, but test its conditions
@@ -122,7 +145,7 @@ public class MessageService {
     }
 
     /**
-     * Passed down an id used to retireve a list of messages
+     * Passed down an id, used to retrieve a list of messages
      * It is expected for the list to simply be empty if there are no messages. 
      * 
      * @param id - represents a user id and used with getPostedBy from message methods
