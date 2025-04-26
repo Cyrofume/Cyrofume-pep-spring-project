@@ -167,6 +167,14 @@ public class SocialMediaController {
         // return ResponseEntity.status(HttpStatus.OK).body("none");
         return ResponseEntity.status(HttpStatus.OK).body(aMessage);
     }  
+    /**
+     * As a User, I should be able to submit a DELETE request on the endpoint DELETE 
+     * localhost:8080/messages/{messageId}.
+     * 
+     * @param messageId - contains object to be deleted
+     * @return status of message object - deleted or not but always in OK status
+     *                                  - Note, if deleted return how many rows updated in body
+     */
     @DeleteMapping("/messages/{messageId}")
     public @ResponseBody ResponseEntity<Integer> deleteMessageByID(@PathVariable("messageId") Integer messageId) {
         Message deletedMessage = messageServ.getMessageByID(messageId);
@@ -177,33 +185,50 @@ public class SocialMediaController {
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(null);
         }
-        // return ResponseEntity.status(HttpStatus.OK).body(rowsUpdated);
     }
+    
+    /**
+     * As a user, I should be able to submit a PATCH request on the 
+     * endpoint PATCH localhost:8080/messages/{messageId}. 
+     * The request body should contain a new message_text values to replace 
+     * the message identified by messageId/. 
+     * 
+     * The request body can not be guaranteed to contain any other information.
+     * @param messageId - this id leads to a message object to be updated
+     * @param newMessage - this object contains a new text to be used
+     * @return status 400 - along with an empty body indicating failure
+     * @return status 200 - along with value 1 indicating a row has been updated
+     */
     @PatchMapping("/messages/{messageId}")
     public @ResponseBody ResponseEntity<Integer> updateMessageByID(@PathVariable("messageId") Integer messageId, @RequestBody Message newMessage ) {
 
-        // Message dummyAccount = new Message();
-        // Integer oldID = messageID;
-        //test if we are able to remove the message and update it
-        int lengthOfNewText = newMessage.getMessageText().length();
-        if (messageServ.getMessageByID(messageId) != null && lengthOfNewText > 0 && lengthOfNewText < 255) {
-            // messageServ.removeMessageID(oldID);
-            messageServ.updateMessageByID(messageServ.getMessageByID(messageId), newMessage);
-            return ResponseEntity.status(200).body(1); //total amount of updated rows
-        } else { 
+        Message messageResult = messageServ.updateMessageByID(messageId, newMessage);
+        
+        if (messageResult == null) {
             return ResponseEntity.status(400).body(null);   
+        } else {
+            return ResponseEntity.status(200).body(1);
         }
+        
         
 
         
     }
-
+    /**
+     * As a user, I should be able to submit a GET request on the endpoint GET 
+     * localhost:8080/accounts/{accountId}/messages.
+     * The response body should contain a JSON representation 
+     * of a list containing all messages posted by
+     * 
+     * @param userID - a particular user, which is retrieved from the database. 
+     * @return status/reponse of a List of Messages - empty or filled but always in OK status
+     */
     @GetMapping("accounts/{accountId}/messages")
     public @ResponseBody ResponseEntity<List<Message>> getMessagesPostedBy(@PathVariable("accountId") Integer userID) {
 
         List<Message> results = messageServ.getMessagesPostedBy(userID);
         return ResponseEntity.status(200).body(results);
-        // return messageServ.getMessagesPostedBy(userID);
+
     }
     
 }

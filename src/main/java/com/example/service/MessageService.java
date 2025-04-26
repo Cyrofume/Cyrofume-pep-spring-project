@@ -79,7 +79,9 @@ public class MessageService {
     }
 
     /**
-     * Delete/remove the message
+     * 
+     * @param id - leads to a message to be deleted
+     * @return 
      */
     public Message removeMessageID(long id) {
         List<Message> allMessages = messageRepos.findAll();
@@ -96,18 +98,37 @@ public class MessageService {
         return null;
     }
 
-    public Message updateMessageByID(Message oldMessage, Message newMessage) {
-        // return null;
-        //we can call the remove and add functions to update a new message
-        // long presistentID = id;
+    /**
+     * Passed down the old and new messages
+     * 
+     * @param id - the current message object we want to find and change its text
+     * @param newMessage - the new message contains a new blog, but test its conditions
+     * @return oldMessge - if conditions of its text are met
+     * @return null - if conditions of a text is not met we do not update the message object
+     */
+    public Message updateMessageByID(long id, Message newMessage) {
 
-        // removeMessageID(id);
-        // Account newAccount = new
-        oldMessage.setMessageText(newMessage.getMessageText());
-        return oldMessage;
-        // return new Message(id, newMessage.getPostedBy(), newMessage.getMessageText(), newMessage.getTimePostedEpoch());
+        // this.getMessageByID(0)
+        int lengthOfNewText = newMessage.getMessageText().length();
+        Message oldMessage = this.getMessageByID(id);
+
+        if (oldMessage != null && lengthOfNewText > 0 && lengthOfNewText < 255) {
+            oldMessage.setMessageText(newMessage.getMessageText());
+            return oldMessage;
+        } else { 
+            return null;   
+        }
+
     }
 
+    /**
+     * Passed down an id used to retireve a list of messages
+     * It is expected for the list to simply be empty if there are no messages. 
+     * 
+     * @param id - represents a user id and used with getPostedBy from message methods
+     * @return List of Messages - from a user's id
+     * @return null - No match was found
+     */
     public List<Message> getMessagesPostedBy(long id) {
 
         List<Message> listOfMessages = messageRepos.findAll();
